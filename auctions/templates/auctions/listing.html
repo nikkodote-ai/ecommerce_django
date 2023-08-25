@@ -1,0 +1,76 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <div>
+
+        {%if listing.active == False%}
+        <h1><strong>Bidding is CLOSED</strong></h1> 
+        {%if winner == request.user%}
+        <h2>YOU WON THE BIDDING</h2>
+        
+        {%endif%}
+        {%endif%}
+        
+        <h2>Listing: {{listing.title}}</h2>
+        <img class = "listing_image" src = "{{listing.image_url}}" alt = '{{listing.title}} image'>
+        <li>{{listing.description}}</li>
+        <h3>Current Bid : $ {{current_bid}}</h3>
+        <h5>Starting Bid : ${{listing.starting_bid}}</h5>
+        <p>{{number_of_bids}} bid(s) so far.</p>
+        
+
+{%if user.is_authenticated%}
+{%if listing.active == True%}
+        <form action="{%url 'add_to_watchlist' listing.id%}" method="post">
+            {%csrf_token%}
+            <input type="submit" value = "Add to Watchlist">
+        </form>
+        
+        <br>   
+    <form action="{%url 'place_bid' %}" method="post">
+        {%csrf_token%}
+        <div class="form-group">
+            <input class="form-control" type="text" name="bid" placeholder="Bid">
+            <input class="form-control" type="hidden" name="listing_id" value = "{{listing.id}}">
+        </div>
+        <input type="submit" value = "Place Bid">
+    </form>
+    {%endif%}
+    
+    <!-- can close bid if user is author of the listing -->
+    {%if request.user == author and listing.active == True%}
+    <form action="{%url 'close_bid' listing.id%}" method="post">
+        {%csrf_token%}
+        <div class="form-group">
+            <!-- <input class="form-control" type="text" name="close_bid" placeholder="Close Bid"> -->
+            <input class="form-control" type="hidden" name="listing_id" value = "{{listing.id}}">
+        </div>
+        <input type="submit" value = "Close Bid" >
+    </form>
+    {%endif%}
+
+    <form action="{%url 'add_comment' %}" method="post">
+        {%csrf_token%}
+        <div class="form-group">
+            <input class="form-control" type="text" name="comment" placeholder="Comment">
+            <input class="form-control" type="hidden" name="listing_id" value = "{{listing.id}}">
+        </div>
+        <input type="submit" value = "Add Comment">
+    </form>
+    {%endif%}
+
+    
+
+    {%for comment in comments%}
+    <div>
+        <p><strong>{{comment.author}} says:</strong></p>
+        <p><em>{{comment.comment}}</em></p>
+    </div>
+    {%endfor%}
+    
+    </div>
+    <h3>Details</h3>
+    <li>Listed by: {{listing.author}}</li>
+    <li>Category: {{listing.category}}</li>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Create Listing</h2>
+
+    <form action="{% url 'create_listing' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input autofocus class="form-control" type="text" name="title" placeholder="Title">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" name="description" placeholder="Description">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" name="starting_bid" placeholder="Starting Bid">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" name="image_url" placeholder="Image URL">
+        </div>
+        <div class="form-group">
+            <!-- maybe make dropdown for (e.g. Fashion, Toys, Electronics, Home, etc.). -->
+            <select name ='category'>
+                {%for category in category_list%}
+                <option value = '{{category.name}}'>{{category}}</option>
+                {%endfor%}
+            </select>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Submit">
+    </form>
+{% endblock %}
